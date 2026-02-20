@@ -157,7 +157,7 @@ def render_table_png(items: List[Item]) -> BytesIO:
 async def start(message: Message):
     USER_ITEMS.setdefault(message.from_user.id, [])
     await message.answer(
-        "Привет! Я собираю позиции и показываю таблицу.\nНажмите «Добавить позицию».",
+        "Ассаляму 'алейкум! Я собираю позиции запчастей в таблицу.\nНажмите «Добавить позицию».",
         reply_markup=menu_kb(),
     )
 
