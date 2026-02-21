@@ -52,22 +52,14 @@ def render_table_png(items: List[Item]) -> BytesIO:
     rows = [[str(i), it.name, it.brand, it.sku, it.price, it.lead_time]
             for i, it in enumerate(items, start=1)]
 
-    # Подбор шрифта под Windows / Linux
-    font = None
-    for font_path in (
-        "C:/Windows/Fonts/consola.ttf",   # Windows: Consolas
-        "C:/Windows/Fonts/lucon.ttf",     # Windows: Lucida Console
-        "C:/Windows/Fonts/cour.ttf",      # Windows: Courier New (иногда)
-        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",  # Linux
-    ):
-        try:
-            font = ImageFont.truetype(font_path, 20)
-            break
-        except OSError:
-            pass
-
-    if font is None:
-        font = ImageFont.load_default()
+    # ✅ Шрифт из папки проекта (гарантированно с кириллицей на Railway и Windows)
+    font_path = os.path.join(os.path.dirname(__file__), "fonts", "DejaVuSansMono.ttf")
+    if not os.path.exists(font_path):
+        raise FileNotFoundError(
+            f"Не найден файл шрифта: {font_path}\n"
+            "Создай папку fonts рядом с bot.py и положи туда DejaVuSansMono.ttf"
+        )
+    font = ImageFont.truetype(font_path, 20)
 
     padding_x = 14
     padding_y = 10
@@ -246,6 +238,9 @@ async def form_lead_time(message: Message, state: FSMContext):
 
 
 async def main():
+    if not BOT_TOKEN:
+        raise RuntimeError("BOT_TOKEN не задан. Добавь переменную окружения BOT_TOKEN (Railway Variables).")
+
     bot = Bot(BOT_TOKEN)
     dp = Dispatcher()
 
